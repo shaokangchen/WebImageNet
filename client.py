@@ -9,6 +9,7 @@ filename = './imagelist.txt'
 #q = myquery.myquery(filename)
 #q.getlist_fromfile(filename)
 q = myres.myquery(filename)
+q.set_threshold(0.05)
 
 host = socket.gethostname()    
 port = 1003               # The same port as used by the server

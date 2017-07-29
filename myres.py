@@ -66,8 +66,12 @@ class myquery:
     def __init__(self, filename=None):
         self.url_list = []
         self.count = 0
+        self.threshold = 0.4
         if(filename != None):
             self.getlist_fromfile(filename)
+
+    def set_threshold(self, threshold):
+        self.threshold =  threshold
 
     def getlist_fromfile(self,filename):
         self.url_list = []
@@ -89,7 +93,7 @@ class myquery:
         except ValueError:
             print ("error reading files")
     def toJSON(self):
-        return dict(images=self.url_list)
+        return dict(images=self.url_list,threshold=self.threshold)
 
     
     @classmethod
@@ -97,6 +101,7 @@ class myquery:
         queries = json.loads(json_string)
         cls.url_list = queries['images']
         cls.count = len(cls.url_list)
+        cls.threshold = queries['threshold']
         return cls
 
 
@@ -104,11 +109,11 @@ class group_results:
     #caffe.set_device(0)
     #caffe.set_mode_gpu()
     net = caffe.Net('./imagenet/deploy.prototxt', './imagenet/bvlc_alexnet.caffemodel', caffe.TEST)
-    conf_threshold = 0.1
-    def __init__(self):
+    def __init__(self, threshold):
         self.url=''
         self.results=[]
         self.valid = False
+        self.conf_threshold = threshold
     def set_url(self, url):
         self.url=url
         self.results=[]
@@ -221,7 +226,7 @@ class group_results:
                 sort_idx = sorted(range(len(classify_res)), key=lambda k: classify_res[k], reverse=True)
                 res = myres()
                 for i in range(0,len(sort_idx)):
-                    if(classify_res[sort_idx[i]]>group_results.conf_threshold):
+                    if(classify_res[sort_idx[i]]>self.conf_threshold):
                         single_res = result()
                         #single_res.set_labels(sort_idx[i],classify_res[sort_idx[i]])
                         single_res.set_labels(sort_idx[i],round(classify_res[sort_idx[i]], 3))
@@ -251,7 +256,7 @@ class group_results:
                 sort_idx = sorted(range(len(classify_res)), key=lambda k: classify_res[k], reverse=True)
                 res = myres()
                 for i in range(0,len(sort_idx)):
-                    if(classify_res[sort_idx[i]]>group_results.conf_threshold):
+                    if(classify_res[sort_idx[i]]>self.conf_threshold):
                         single_res = result()
                         #single_res.set_labels(sort_idx[i],classify_res[sort_idx[i]])
                         single_res.set_labels(sort_idx[i],round(classify_res[sort_idx[i]], 3))
@@ -280,14 +285,14 @@ class result_list:
         return dict(results=self.results)
     def run_queries(self, query):
         for q in query.url_list:
-            g = group_results()
+            g = group_results(query.threshold)
             g.set_url(q)
             #g.run_classify()
             g.run_classify_exhaust()
             #print(json.dumps(g,cls=ComplexEncoder, indent=4))
             self.add(g)
     def conver_json(self):
-        return json.dumps(self.toJSON(),cls=ComplexEncoder)
+        return json.dumps(self.toJSON(),cls=ComplexEncoder, indent=4)
 
 class ComplexEncoder(json.JSONEncoder):
     def default(self,obj):

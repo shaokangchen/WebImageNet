@@ -23,12 +23,13 @@ def main():
         data = conn.recv(1024)
         if not data: continue
     
-        search = myres.myquery.fromJSON(data)
+        search = myres.myquery.fromJSON(data)        
         search_res = myres.result_list()
         search_res.run_queries(search)
         string2 = json.dumps(search_res, cls = myres.ComplexEncoder, indent=4)
         print string2
         conn.sendall(search_res.conver_json())
+        #conn.sendall(string2)
         conn.close()  
     
 
