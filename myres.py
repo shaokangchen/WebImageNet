@@ -106,8 +106,8 @@ class myquery:
 
 
 class group_results:
-    #caffe.set_device(0)
-    #caffe.set_mode_gpu()
+    caffe.set_device(0)
+    caffe.set_mode_gpu()
     net = caffe.Net('./imagenet/deploy.prototxt', './imagenet/bvlc_alexnet.caffemodel', caffe.TEST)
     def __init__(self, threshold):
         self.url=''
@@ -202,11 +202,11 @@ class group_results:
 
 
     def classify_exhaust(self,image):
-        win_size = image.shape[0]*1/2
-        crop_list, crop_loc = self.scan_image(image, win_size, win_size/4)
         win_size = image.shape[0]*2/3
-        crop_list2, crop_loc2 = self.scan_image(image, win_size, win_size/4)
+        crop_list, crop_loc = self.scan_image(image, win_size, win_size/4)
         win_size = image.shape[0]*3/4
+        crop_list2, crop_loc2 = self.scan_image(image, win_size, win_size/4)
+        win_size = image.shape[0]*4/5
         crop_list3, crop_loc3 = self.scan_image(image, win_size, win_size/4)
         crop_list += crop_list2 + crop_list3
         crop_loc +=  crop_loc2 + crop_loc3
