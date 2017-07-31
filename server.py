@@ -3,7 +3,7 @@ import time
 import myres
 import json
 from multiprocessing import Pool, freeze_support
-
+from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 
 def main():
     host = ''        
