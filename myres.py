@@ -31,6 +31,7 @@ def load_labels(dictfile):
         
     except:
         print( "error reading label file" )
+        raise IOError("cannot read label file " + dictfile)
     return class_labels
 
 ### define a single classify result for one class label
@@ -97,9 +98,10 @@ class myquery:
                     #print(id) 
             else:
                 print ("file " + filename + " does not exists")
-            print('totally ' , self.count , ' valid URL images collected ')
+            print('totally ' , self.count , ' URL links collected ')
         except:
             print ("error reading files")
+            raise IOError("cannot read url list " + filename)
     def toJSON(self):
         return dict(images=self.url_list,threshold=self.threshold)
 
@@ -117,10 +119,11 @@ class group_results:
     #caffe.set_device(0)
     #caffe.set_mode_gpu()
     try:
+
         net = caffe.Net('./imagenet/deploy.prototxt', './imagenet/bvlc_alexnet.caffemodel', caffe.TEST)
     except:
         print('cannot load model file')
-
+        raise IOError("cannot load model files.")
     def __init__(self, threshold):
         self.url=''
         self.results=[]
