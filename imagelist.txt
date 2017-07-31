@@ -1,0 +1,8 @@
+http://www.jqueryscript.net/images/Simplest-Responsive-jQuery-Image-Lightbox-Plugin-simple-lightbox.jpg
+invalid_image.jpg
+http://farm4.static.flickr.com/3175/2737866473_7958dc8760.jpg
+http://google.com.au/not_an_image
+http://invalid_url.com/invalid_url.jpg
+http://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Neighbours_Siamese.jpg/640px-Neighbours_Siamese.jpg
+http://farm2.static.flickr.com/1292/1133477960_f00562a1d5.jpg
+https://cdn1.droom.in/photos/images/drm/super-cars.png

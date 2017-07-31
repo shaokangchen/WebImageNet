@@ -116,23 +116,30 @@ class myquery:
 
 ### define group of results for a single URL query 
 class group_results:
-    #caffe.set_device(0)
-    #caffe.set_mode_gpu()
+    caffe.set_device(0)
+    caffe.set_mode_gpu()
     try:
 
         net = caffe.Net('./imagenet/deploy.prototxt', './imagenet/bvlc_alexnet.caffemodel', caffe.TEST)
     except:
         print('cannot load model file')
         raise IOError("cannot load model files.")
-    def __init__(self, threshold):
+    def __init__(self, threshold=0.5):
         self.url=''
         self.results=[]
         self.valid = False
-        self.conf_threshold = threshold
-    def set_url(self, url):
+        ### check validation of thershold ###
+        if( (threshold > 0) and (threshold < 1.0)): 
+            self.conf_threshold = threshold
+        else:
+            print('invalid threshold, set to default at 0.5')
+            self.conf_threshold = 0.5
+    def set_url(self, url, threshold=0.5):
+        ### if url is reset, clear results and valid flag, set threshold to default = 0.5
         self.url=url
         self.results=[]
         self.valid = False
+        self.conf_threshold = threshold
     def is_url_image(self,url):
         try:
             maintype= mimetypes.guess_type(urlparse.urlparse(url).path)[0]
@@ -254,6 +261,9 @@ class group_results:
 ### run a exhaustive classify on a query url by scanning windows
 ### return the location of the class labels to users
     def run_classify_exhaust(self):
+        ### clear results and valid flag ###
+        self.results=[]
+        self.valid = False
         if( self.is_url_image(self.url) ):
             image = self.download_img(self.url)
             ### if invalid image download, return the error message
@@ -294,6 +304,9 @@ class group_results:
 ### run a simple classify of a query url with only one window
 ### TODO: allow users to choose query mode: simple or exhaustive   
     def run_classify(self):
+        ### clear results and valid flag ###
+        self.results=[]
+        self.valid = False
         if( self.is_url_image(self.url) ):
             image = self.download_img(self.url)
             if(image is None):
@@ -334,7 +347,7 @@ class result_list:
 
     def single_query(self, url, threshold):
         g = group_results(threshold)
-        g.set_url(url)
+        g.set_url(url,threshold)
         g.run_classify_exhaust()        
         return g    
     def run_queries(self, query):  
